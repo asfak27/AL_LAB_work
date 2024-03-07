@@ -1,0 +1,140 @@
+//A star
+
+#include <bits/stdc++.h>
+#include <math.h>
+#include <thread>
+#include <chrono>
+using namespace std;
+#define  ll         long long int
+//#define  endl       '\n'
+#define  inf        1000000007
+#define  N          300005
+#define  yes        cout<<"Yes"<<endl
+#define  no         cout<<"No"<<endl
+#define  fast       ios_base::sync_with_stdio(false); cin.tie(NULL); cout.tie(NULL)
+typedef     vector<int> vi;
+#define pb  push_back
+int mn;
+vector<int> ans;
+vector<int> sorted_v;
+vector<vector<int>>parrr;
+vector<int> rev(vi v, int x)
+{
+    reverse(v.begin(), v.begin() + x);
+    return v;
+}
+/*
+vector<int>rev(vector<int>&v,int idx)
+{
+    vector<int>p;
+
+    for(ll i=0; i<=idx; i++)
+    {
+        p.push_back(v[i]);
+    }
+    reverse(p.begin(),p.end());
+    for(ll i=idx+1; i<v.size(); i++)
+    {
+        p.push_back(v[i]);
+    }
+    return p;
+}*/
+
+
+int heautistic(vector<int> v)
+{
+    int h = 0, i;
+    for (i = 0; i < v.size(); i++)
+    {
+        if (v[i] != sorted_v[i]) h++;
+    }
+    return h;
+}
+
+void Astar_serarch(vector<int> v)
+{
+    map<vector<int>, int>vis;
+    map<vector<int>, int>mp;
+    map<vector<int>, vector<int>>path;
+    map<vector<int>, vector<int>>parent;
+    priority_queue<pair<int, vector<int>>>q;
+    int h = heautistic(v);
+    q.push({ -h, v});
+    vis[v] = 1;
+    while (!q.empty())
+    {
+        pair<int, vector<int> > node = q.top();
+        vector<int>  cur = node.second;
+        q.pop();
+        if (is_sorted(cur.begin(),cur.end()))
+        {
+            ans = path[cur];
+            while (cur != v)
+            {
+                parrr.pb(cur);
+                cur = parent[cur];
+            }
+            reverse(parrr.begin(), parrr.end());
+            return;
+        }
+        int sz = cur.size();
+        for (int i = 2; i <= sz; i++)
+        {
+            vector<int> next = rev(cur, i);
+            if (vis[next]) continue;
+            vis[next] = 1;
+            parent[next] = cur;
+            h = heautistic(next);
+            mp[next] = mp[cur] + 1;
+            int g = mp[next];
+            int gh = h + g;
+            q.push({ -gh, next});
+            path[next] = path[cur];
+            path[next].pb(i);
+        }
+    }
+}
+
+int main()
+{
+    cout<<"                                                     Asfak Shahrier"<<endl;
+    cout<<"                                                     Id : 18CSE227"<<endl;
+    int n, i, j, x, y;
+    //cout<<"Enter the Number of Pancake :";
+    cin >> n;
+    vector<int> v(n);
+    for (i = 0; i < n; i++) cin >> v[i];
+    sorted_v = v;
+
+    int index = 0;
+    for (vi vv : parrr)
+    {
+        cout << "reverse first " << ans[index++] << " Element :" << endl;
+        for (int x : vv) cout << x << " ";
+        cout << endl;
+    }
+
+    parrr.clear();
+    ans.clear();
+    Astar_serarch(v);
+    cout << "Minimum Cost: ";
+    cout << ans.size() << endl;
+    cout << endl << endl;
+
+    cout<<"List of element that reverse :";
+    for(auto it:ans)
+    {
+        cout<<it<<" ";
+    }
+    cout<<endl;
+
+    index = 0;
+    for (vector<int> vv : parrr)
+    {
+        this_thread::sleep_for(chrono::seconds(1));
+        cout << "Reverse first " << ans[index++] << " Element : ";
+        for (int x : vv) cout << x << " ";
+        cout << endl;
+    }
+}
+
